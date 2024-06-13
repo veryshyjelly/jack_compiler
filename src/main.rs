@@ -23,6 +23,5 @@ fn main() {
     let mut file = File::create(Path::new(&filename).with_extension("xml")).unwrap();
 
     let class = parser.next_class().unwrap();
-    let xml_string = serde_xml_rs::to_string(&class).unwrap();
-    writeln!(file, "{xml_string}").unwrap();
+    writeln!(file, "{class:?}").unwrap();
 }

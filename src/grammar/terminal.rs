@@ -1,6 +1,4 @@
-use serde::Serialize;
-
-#[derive(Debug, Eq, PartialEq, Clone, Serialize)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum Terminal {
     Keyword(Keyword),
     Symbol(char),
@@ -42,7 +40,7 @@ impl Terminal {
     }
 }
 
-#[derive(Debug, Eq, PartialEq, Copy, Clone, Serialize)]
+#[derive(Debug, Eq, PartialEq, Copy, Clone)]
 pub enum Keyword {
     Class,
     Constructor,
@@ -98,5 +96,5 @@ impl Keyword {
     }
 }
 
-#[derive(Debug, Eq, PartialEq, Clone, Serialize)]
+#[derive(Debug, Eq, PartialEq, Clone)]
 pub struct Identifier(pub String);

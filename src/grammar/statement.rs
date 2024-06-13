@@ -1,9 +1,8 @@
 use crate::grammar::expression::{Expression, SubroutineCall};
 use crate::grammar::structure::VarName;
-use serde::Serialize;
 
 pub type Statements = Vec<Statement>;
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
 pub enum Statement {
     LetStatement(LetStatement),
     IfStatement(IfStatement),
@@ -11,15 +10,15 @@ pub enum Statement {
     DoStatement(DoStatement),
     ReturnStatement(ReturnStatement),
 }
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
 pub struct LetStatement(pub VarName, pub Option<Index>, pub Expression);
 type Index = Expression;
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
 pub struct IfStatement(pub Expression, pub Statements, pub Option<ElseStatement>);
 pub type ElseStatement = Statements;
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
 pub struct WhileStatement(pub Expression, pub Statements);
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
 pub struct DoStatement(pub SubroutineCall);
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
 pub struct ReturnStatement(pub Option<Expression>);

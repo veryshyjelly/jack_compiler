@@ -1,13 +1,12 @@
 use crate::grammar::statement::Statements;
 use crate::grammar::terminal::*;
-use serde::Serialize;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
 pub struct Class(pub ClassName, pub Vec<ClassVarDec>, pub Vec<SubroutineDec>);
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
 pub struct ClassVarDec(pub ClassVarType, pub Type, pub Vec<VarName>);
 
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
 pub enum ClassVarType {
     Static,
     Field,
@@ -24,7 +23,7 @@ impl ClassVarType {
     }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
 pub enum Type {
     Int,
     Char,
@@ -45,7 +44,7 @@ impl Type {
     }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
 pub struct SubroutineDec(
     pub SubroutineType,
     pub ReturnType,
@@ -54,7 +53,7 @@ pub struct SubroutineDec(
     pub SubroutineBody,
 );
 
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
 pub enum SubroutineType {
     Constructor,
     Function,
@@ -74,7 +73,7 @@ impl SubroutineType {
     }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
 pub enum ReturnType {
     Base(Type),
     Void,
@@ -91,11 +90,11 @@ impl ReturnType {
 }
 
 pub type ParameterList = Vec<Parameter>;
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
 pub struct Parameter(pub Type, pub Identifier);
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
 pub struct SubroutineBody(pub Vec<VarDec>, pub Statements);
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
 pub struct VarDec(pub Type, pub Vec<VarName>);
 pub type VarName = Identifier;
 pub type SubroutineName = Identifier;
