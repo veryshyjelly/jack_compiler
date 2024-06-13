@@ -56,10 +56,10 @@ impl<'a> Lexer<'a> {
                 {
                     i += 1;
                 }
-                if i > self.content.len() {
+                if i + 1 > self.content.len() {
                     self.content = &[]
                 } else {
-                    self.content = &self.content[i..]
+                    self.content = &self.content[i + 1..]
                 }
             } else {
                 break;

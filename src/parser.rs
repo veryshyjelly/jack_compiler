@@ -112,14 +112,13 @@ impl<'a> Parser<'a> {
                 return Ok(res);
             }
 
-            let var_type =
-                Type::from_terminal(next_element)?;
+            let var_type = Type::from_terminal(next_element)?;
             let var_name = self
                 .next_element()
                 .ok_or("variable name expected")?
                 .identifier()?;
             res.push(Parameter(var_type, var_name));
-            
+
             let comma = self.next_element().ok_or(", or ) expected")?;
             if comma != Symbol(',') {
                 self.pending_elements.push(comma);
@@ -338,8 +337,10 @@ impl<'a> Parser<'a> {
                 if square_bracket == Symbol('[') {
                     let index = self.next_expression()?;
                     self.consume(Symbol(']'))?;
-                    Term::VarNameIndex(val, Box::new(index))
-                } else if let Ok(subroutine_call) = self.next_subroutine_call(val.clone()) {
+                    return Ok(Term::VarNameIndex(val, Box::new(index)));
+                }
+                self.pending_elements.push(square_bracket);
+                if let Ok(subroutine_call) = self.next_subroutine_call(val.clone()) {
                     Term::SubroutineCall(subroutine_call)
                 } else {
                     Term::VarName(val)

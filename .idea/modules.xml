@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/hack_compiler.iml" filepath="$PROJECT_DIR$/.idea/hack_compiler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/jack_compiler.iml" filepath="$PROJECT_DIR$/.idea/jack_compiler.iml" />
     </modules>
   </component>
 </project>

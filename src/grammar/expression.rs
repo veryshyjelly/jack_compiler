@@ -1,10 +1,13 @@
 use crate::grammar::structure::{SubroutineName, VarName};
 use crate::grammar::terminal::{Identifier, Keyword};
+use serde::Serialize;
 
 pub type ExpressionList = Vec<Expression>;
 
+#[derive(Debug, Serialize)]
 pub struct Expression(pub Term, pub Vec<OpTerm>);
 
+#[derive(Debug, Serialize)]
 pub enum Term {
     IntegerConstant(u16),
     StringConstant(String),
@@ -15,7 +18,7 @@ pub enum Term {
     UnaryOpTerm(UnaryOp, Box<Term>),
     SubroutineCall(SubroutineCall),
 }
-
+#[derive(Debug, Serialize)]
 pub enum KeywordConstant {
     True,
     False,
@@ -39,6 +42,7 @@ impl KeywordConstant {
     }
 }
 
+#[derive(Debug, Serialize)]
 pub struct SubroutineCall(
     pub Option<ClassOrVarName>,
     pub SubroutineName,
@@ -46,8 +50,10 @@ pub struct SubroutineCall(
 );
 type ClassOrVarName = Identifier;
 
+#[derive(Debug, Serialize)]
 pub struct OpTerm(pub Op, pub Term);
 
+#[derive(Debug, Serialize)]
 pub enum Op {
     Add,
     Sub,
@@ -79,6 +85,7 @@ impl Op {
     }
 }
 
+#[derive(Debug, Serialize)]
 pub enum UnaryOp {
     Minus,
     Not,
