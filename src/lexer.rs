@@ -87,7 +87,7 @@ impl<'a> Lexer<'a> {
         let term = if first_char.is_numeric() {
             IntegerConstant(token.parse().ok()?)
         } else if first_char.is_alphanumeric() {
-            if let Some(keyword) = terminal::Keyword::from_str(&token) {
+            if let Ok(keyword) = terminal::Keyword::from_str(&token) {
                 Keyword(keyword)
             } else {
                 Identifier(terminal::Identifier(token))

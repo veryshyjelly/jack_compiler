@@ -11,8 +11,8 @@ pub enum Statement {
 }
 pub struct LetStatement(pub VarName, pub Option<Index>, pub Expression);
 type Index = Expression;
-pub struct IfStatement(pub Expression, pub Statements, pub Option<ElseStatements>);
-type ElseStatements = Statements;
+pub struct IfStatement(pub Expression, pub Statements, pub Option<ElseStatement>);
+pub type ElseStatement = Statements;
 pub struct WhileStatement(pub Expression, pub Statements);
-pub struct DoStatement(SubroutineCall);
-pub struct ReturnStatement(Option<Expression>);
+pub struct DoStatement(pub SubroutineCall);
+pub struct ReturnStatement(pub Option<Expression>);

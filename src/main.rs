@@ -19,5 +19,5 @@ fn main() {
 
     let mut parser = Parser::new(&content);
 
-    while let Some(class) = parser.next_class() {}
+    while let Ok(_class) = parser.next_class() {}
 }

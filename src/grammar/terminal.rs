@@ -1,4 +1,4 @@
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Clone)]
 pub enum Terminal {
     Keyword(Keyword),
     Symbol(char),
@@ -8,39 +8,39 @@ pub enum Terminal {
 }
 
 impl Terminal {
-    pub fn keyword(self) -> Option<Keyword> {
+    pub fn keyword(self) -> Result<Keyword, String> {
         match self {
-            Terminal::Keyword(val) => Some(val),
-            _ => None,
+            Terminal::Keyword(val) => Ok(val),
+            e => Err(format!("keyword expected found: {e:?}")),
         }
     }
-    pub fn symbol(self) -> Option<char> {
+    pub fn symbol(self) -> Result<char, String> {
         match self {
-            Terminal::Symbol(val) => Some(val),
-            _ => None,
+            Terminal::Symbol(val) => Ok(val),
+            e => Err(format!("symbol expected found: {e:?}")),
         }
     }
-    pub fn integer(self) -> Option<u16> {
+    pub fn integer(self) -> Result<u16, String> {
         match self {
-            Terminal::IntegerConstant(val) => Some(val),
-            _ => None,
+            Terminal::IntegerConstant(val) => Ok(val),
+            e => Err(format!("integer expected found: {e:?}")),
         }
     }
-    pub fn string(self) -> Option<String> {
+    pub fn string(self) -> Result<String, String> {
         match self {
-            Terminal::StringConstant(val) => Some(val),
-            _ => None,
+            Terminal::StringConstant(val) => Ok(val),
+            e => Err(format!("string constant expected found: {e:?}")),
         }
     }
-    pub fn identifier(self) -> Option<Identifier> {
+    pub fn identifier(self) -> Result<Identifier, String> {
         match self {
-            Terminal::Identifier(val) => Some(val),
-            _ => None,
+            Terminal::Identifier(val) => Ok(val),
+            e => Err(format!("identifier expected found: {e:?}")),
         }
     }
 }
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Copy, Clone)]
 pub enum Keyword {
     Class,
     Constructor,
@@ -66,7 +66,7 @@ pub enum Keyword {
 }
 
 impl Keyword {
-    pub fn from_str(word: &str) -> Option<Self> {
+    pub fn from_str(word: &str) -> Result<Self, String> {
         use Keyword::*;
         let x = match word {
             "class" => Class,
@@ -90,11 +90,11 @@ impl Keyword {
             "else" => Else,
             "while" => While,
             "return" => Return,
-            _ => None?,
+            e => Err(format!("keyword expected found: {e:?}"))?,
         };
-        Some(x)
+        Ok(x)
     }
 }
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Clone)]
 pub struct Identifier(pub String);

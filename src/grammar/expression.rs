@@ -1,11 +1,9 @@
-use crate::grammar::structure::{ClassName, SubroutineName, VarName};
+use crate::grammar::structure::{SubroutineName, VarName};
+use crate::grammar::terminal::{Identifier, Keyword};
 
-type ExpressionList = Vec<Expression>;
+pub type ExpressionList = Vec<Expression>;
 
-pub enum Expression {
-    Term(Term),
-    OpTerm(Vec<OpTerm>),
-}
+pub struct Expression(pub Term, pub Vec<OpTerm>);
 
 pub enum Term {
     IntegerConstant(u16),
@@ -25,13 +23,30 @@ pub enum KeywordConstant {
     This,
 }
 
-pub struct SubroutineCall(Option<ClassOrVarName>, SubroutineName, ExpressionList);
-enum ClassOrVarName {
-    ClassName(ClassName),
-    VarName(VarName),
+impl KeywordConstant {
+    pub fn from_keyword(keyword: Keyword) -> Result<Self, String> {
+        use KeywordConstant::*;
+        let res = match keyword {
+            Keyword::True => True,
+            Keyword::False => False,
+            Keyword::Null => Null,
+            Keyword::This => This,
+            e => Err(format!(
+                "expected true|false|null|this expected found: {e:?}"
+            ))?,
+        };
+        Ok(res)
+    }
 }
 
-pub struct OpTerm(Op, Term);
+pub struct SubroutineCall(
+    pub Option<ClassOrVarName>,
+    pub SubroutineName,
+    pub ExpressionList,
+);
+type ClassOrVarName = Identifier;
+
+pub struct OpTerm(pub Op, pub Term);
 
 pub enum Op {
     Add,
@@ -58,7 +73,7 @@ impl Op {
             '<' => Lt,
             '>' => Gt,
             '=' => Eq,
-           _ => None?
+            _ => None?,
         };
         Some(x)
     }
@@ -75,7 +90,7 @@ impl UnaryOp {
         match c {
             '-' => Some(Minus),
             '~' => Some(Not),
-            _ => None
+            _ => None,
         }
     }
 }

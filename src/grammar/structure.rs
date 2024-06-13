@@ -10,12 +10,12 @@ pub enum ClassVarType {
 }
 
 impl ClassVarType {
-    pub fn from_keyword(tp: &Keyword) -> Option<Self> {
+    pub fn from_keyword(keyword: &Keyword) -> Result<Self, String> {
         use ClassVarType::*;
-        match tp {
-            Keyword::Static => Some(Static),
-            Keyword::Field => Some(Field),
-            _ => None,
+        match keyword {
+            Keyword::Static => Ok(Static),
+            Keyword::Field => Ok(Field),
+            e => Err(format!("expected static or field found: {e:?}")),
         }
     }
 }
@@ -28,14 +28,14 @@ pub enum Type {
 }
 
 impl Type {
-    pub fn from_terminal(tp: Terminal) -> Option<Self> {
+    pub fn from_terminal(terminal: Terminal) -> Result<Self, String> {
         use Type::*;
-        match tp {
-            Terminal::Keyword(Keyword::Int) => Some(Int),
-            Terminal::Keyword(Keyword::Char) => Some(Char),
-            Terminal::Keyword(Keyword::Boolean) => Some(Char),
-            Terminal::Identifier(val) => Some(ClassName(val)),
-            _ => None,
+        match terminal {
+            Terminal::Keyword(Keyword::Int) => Ok(Int),
+            Terminal::Keyword(Keyword::Char) => Ok(Char),
+            Terminal::Keyword(Keyword::Boolean) => Ok(Char),
+            Terminal::Identifier(val) => Ok(ClassName(val)),
+            e => Err(format!("type expected found: {e:?}")),
         }
     }
 }
@@ -55,15 +55,15 @@ pub enum SubroutineType {
 }
 
 impl SubroutineType {
-    pub fn from_keyword(tp: &Keyword) -> Option<Self> {
+    pub fn from_keyword(keyword: &Keyword) -> Result<Self, String> {
         use SubroutineType::*;
-        let x = match tp {
+        let x = match keyword {
             Keyword::Constructor => Constructor,
             Keyword::Function => Function,
             Keyword::Method => Method,
-            _ => None?,
+            e => Err(format!("constructor|function|method expected found: {e:?}"))?,
         };
-        Some(x)
+        Ok(x)
     }
 }
 
@@ -73,11 +73,11 @@ pub enum ReturnType {
 }
 
 impl ReturnType {
-    pub fn from_terminal(tp: Terminal) -> Option<Self> {
+    pub fn from_terminal(tp: Terminal) -> Result<Self, String> {
         use ReturnType::*;
         match tp {
-            Terminal::Keyword(Keyword::Void) => Some(Void),
-            tp => Some(Base(Type::from_terminal(tp)?)),
+            Terminal::Keyword(Keyword::Void) => Ok(Void),
+            tp => Ok(Base(Type::from_terminal(tp)?)),
         }
     }
 }
