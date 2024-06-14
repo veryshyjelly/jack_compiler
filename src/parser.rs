@@ -132,12 +132,19 @@ impl<'a> Parser<'a> {
     fn next_subroutine_body(&mut self) -> Result<SubroutineBody, String> {
         self.consume(Symbol('{'))?;
         let mut res = SubroutineBody(vec![], vec![]);
+        // Scan all the var declarations first
         while let Some(ele) = self.next_element() {
-            if let Ok(next_keyword) = ele.clone().keyword() {
-                match next_keyword {
-                    Keyword::Var => res.0.push(self.next_var_dec()?),
-                    e => res.1.push(self.next_statement(e)?),
-                };
+            if let Ok(Keyword::Var) = ele.clone().keyword() {
+                res.0.push(self.next_var_dec()?)
+            } else {
+                self.pending_elements.push(ele);
+                break;
+            }
+        }
+        // Then scan all the statements
+        while let Some(ele) = self.next_element() {
+            if let Ok(e) = ele.clone().keyword() {
+                res.1.push(self.next_statement(e)?);
             } else {
                 self.pending_elements.push(ele);
                 break;

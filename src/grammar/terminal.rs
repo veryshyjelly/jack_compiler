@@ -96,5 +96,5 @@ impl Keyword {
     }
 }
 
-#[derive(Debug, Eq, PartialEq, Clone)]
+#[derive(Debug, Hash, Eq, PartialEq, Clone)]
 pub struct Identifier(pub String);

@@ -23,7 +23,7 @@ impl ClassVarType {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Hash, Eq, PartialEq, Clone)]
 pub enum Type {
     Int,
     Char,

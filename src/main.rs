@@ -1,12 +1,15 @@
+use crate::compiler::Compiler;
 use crate::parser::Parser;
 use std::env::args;
 use std::fs::File;
 use std::io::{Read, Write};
 use std::path::Path;
 
+mod compiler;
 mod grammar;
 mod lexer;
 mod parser;
+mod symbol_table;
 
 fn main() {
     let filename = args().nth(1).unwrap();
@@ -20,8 +23,10 @@ fn main() {
 
     let mut parser = Parser::new(&content);
 
-    let mut file = File::create(Path::new(&filename).with_extension("xml")).unwrap();
+    let mut file = File::create(Path::new(&filename).with_extension("vm")).unwrap();
 
     let class = parser.next_class().unwrap();
-    writeln!(file, "{class:?}").unwrap();
+    let mut compiler = Compiler::new();
+    let commands = compiler.compile_class(class).unwrap();
+    writeln!(file, "{}", commands.join("\n")).unwrap();
 }
