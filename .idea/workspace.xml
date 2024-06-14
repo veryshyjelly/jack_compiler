@@ -8,15 +8,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d96dad0e-b5c8-427e-92de-e2e2b7a13d55" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/compiler.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/symbol_table.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Main.jack" beforeDir="false" afterPath="$PROJECT_DIR$/Main.jack" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/grammar/structure.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/grammar/structure.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/grammar/terminal.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/grammar/terminal.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main.jack" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Square.jack" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/compiler.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/compiler.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/parser.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -113,7 +109,7 @@
       <option name="presentableId" value="Default" />
       <updated>1718264322849</updated>
       <workItem from="1718264323874" duration="5682000" />
-      <workItem from="1718274140863" duration="16915000" />
+      <workItem from="1718274140863" duration="18113000" />
     </task>
     <servers />
   </component>

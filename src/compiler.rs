@@ -71,7 +71,7 @@ impl Compiler {
             ),
             format!(
                 "push constant {}",
-                self.subroutine_symbol_table.var_count(Kind::Field)
+                self.class_symbol_table.var_count(Kind::Field)
             ),
             "call Memory.alloc 1".into(),
             "pop pointer 0".into(),
@@ -166,7 +166,11 @@ impl Compiler {
                 // Compute the if condition
                 res.append(&mut self.compile_expression(&s.0)?);
                 res.push("not".into());
-                res.push(format!("if-goto ELSE_LABEL{}", self.label_count));
+                
+                let if_label = format!("IF_LABEL${}",  self.label_count);
+                let else_label = format!("ELSE_LABEL${}", self.label_count);
+                
+                res.push(format!("if-goto {}", else_label));
                 // Compile the statements in the if block
                 res.append(
                     &mut self
@@ -175,8 +179,8 @@ impl Compiler {
                         .map(|x| format!("  {x}"))
                         .collect(),
                 );
-                res.push(format!("goto IF_LABEL{}", self.label_count));
-                res.push(format!("label ELSE_LABEL{}", self.label_count));
+                res.push(format!("goto {}", if_label));
+                res.push(format!("label {}", else_label));
                 // Compile the statements in the else block
                 if let Some(else_statements) = s.2 {
                     res.append(
@@ -187,15 +191,18 @@ impl Compiler {
                             .collect(),
                     );
                 }
-                res.push(format!("label IF_LABEL{}", self.label_count));
+                res.push(format!("label {}", if_label));
             }
             Statement::WhileStatement(s) => {
                 self.label_count += 1;
-                res.push(format!("label WHILE_LABEL{}", self.label_count));
+                let while_label = format!("WHILE_LABEL${}",  self.label_count);
+                let break_label = format!("BREAK_LABEL${}",  self.label_count);
+                
+                res.push(format!("label {}", while_label));
                 // Compute the while condition
                 res.append(&mut self.compile_expression(&s.0)?);
                 res.push("not".into());
-                res.push(format!("if-goto BREAK_LABEL{}", self.label_count));
+                res.push(format!("if-goto {}", break_label));
                 // Compile the statements in the while block
                 res.append(
                     &mut self
@@ -204,8 +211,8 @@ impl Compiler {
                         .map(|x| format!("  {x}"))
                         .collect(),
                 );
-                res.push(format!("goto WHILE_LABEL{}", self.label_count));
-                res.push(format!("label BREAK_LABEL{}", self.label_count));
+                res.push(format!("goto {}", while_label));
+                res.push(format!("label {}", break_label));
             }
             Statement::DoStatement(s) => {
                 res.append(&mut self.compile_subroutine_call(&s.0)?);
@@ -233,7 +240,7 @@ impl Compiler {
                     "call {}.{} {}",
                     self.class_name_of(&name.0)?,
                     sub_call.1 .0,
-                    sub_call.2.len()
+                    sub_call.2.len() + 1
                 ));
             } else {
                 // Function call to another class
@@ -248,7 +255,8 @@ impl Compiler {
                 ));
             }
         } else {
-            // Function call to this class
+            // Method call to this class static functions cannot be called like this
+            res.push("push pointer 0".into()); 
             for exp in sub_call.2.iter() {
                 res.append(&mut self.compile_expression(exp)?);
             }
@@ -256,7 +264,7 @@ impl Compiler {
                 "call {}.{} {}",
                 self.class_name.0,
                 sub_call.1 .0,
-                sub_call.2.len()
+                sub_call.2.len() + 1
             ));
         }
         Ok(res)
@@ -362,15 +370,15 @@ impl Compiler {
             });
         }
 
-        // Check if the user has returned at the end of the subroutine
-        let last = subroutine_body
-            .1
-            .last()
-            .ok_or("return statement required")?;
-        match last {
-            Statement::ReturnStatement(_) => {}
-            _ => Err("return statement expected at the end")?,
-        }
+        // // Check if the user has returned at the end of the subroutine
+        // let last = subroutine_body
+        //     .1
+        //     .last()
+        //     .ok_or("return statement required")?;
+        // match last {
+        //     Statement::ReturnStatement(_) => {}
+        //     _ => Err("return statement expected at the end")?,
+        // }
         Ok(subroutine_body.1)
     }
 
