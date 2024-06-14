@@ -91,8 +91,8 @@ To use this compiler, you'll need to have Rust installed on your machine. If you
 Clone the repository and navigate to the project directory:
 
 ```sh
-git clone https://github.com/yourusername/jack-compiler.git
-cd jack-compiler
+git clone https://github.com/veryshyjelly/jack_compiler.git
+cd jack_compiler
 ```
 
 Build the project using Cargo:
