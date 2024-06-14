@@ -166,10 +166,10 @@ impl Compiler {
                 // Compute the if condition
                 res.append(&mut self.compile_expression(&s.0)?);
                 res.push("not".into());
-                
-                let if_label = format!("IF_LABEL${}",  self.label_count);
+
+                let if_label = format!("IF_LABEL${}", self.label_count);
                 let else_label = format!("ELSE_LABEL${}", self.label_count);
-                
+
                 res.push(format!("if-goto {}", else_label));
                 // Compile the statements in the if block
                 res.append(
@@ -195,9 +195,9 @@ impl Compiler {
             }
             Statement::WhileStatement(s) => {
                 self.label_count += 1;
-                let while_label = format!("WHILE_LABEL${}",  self.label_count);
-                let break_label = format!("BREAK_LABEL${}",  self.label_count);
-                
+                let while_label = format!("WHILE_LABEL${}", self.label_count);
+                let break_label = format!("BREAK_LABEL${}", self.label_count);
+
                 res.push(format!("label {}", while_label));
                 // Compute the while condition
                 res.append(&mut self.compile_expression(&s.0)?);
@@ -256,7 +256,7 @@ impl Compiler {
             }
         } else {
             // Method call to this class static functions cannot be called like this
-            res.push("push pointer 0".into()); 
+            res.push("push pointer 0".into());
             for exp in sub_call.2.iter() {
                 res.append(&mut self.compile_expression(exp)?);
             }
@@ -298,7 +298,10 @@ impl Compiler {
         match term {
             Term::IntegerConstant(c) => res.push(format!("push constant {c}")),
             Term::StringConstant(s) => {
-                res.extend([format!("push constant {}", s.len()), "call String.new 1".into()]);
+                res.extend([
+                    format!("push constant {}", s.len()),
+                    "call String.new 1".into(),
+                ]);
                 for c in s.chars() {
                     res.push(format!("push constant {}", c as u8));
                     res.push("call String.appendChar 2".into());
@@ -307,7 +310,9 @@ impl Compiler {
             Term::KeywordConstant(c) => {
                 match c {
                     KeywordConstant::True => res.extend(["push constant 1".into(), "neg".into()]),
-                    KeywordConstant::False | KeywordConstant::Null => res.extend(["push constant 0".into()]),
+                    KeywordConstant::False | KeywordConstant::Null => {
+                        res.extend(["push constant 0".into()])
+                    }
                     KeywordConstant::This => res.extend(["push pointer 0".into()]),
                 };
             }
@@ -370,15 +375,6 @@ impl Compiler {
             });
         }
 
-        // // Check if the user has returned at the end of the subroutine
-        // let last = subroutine_body
-        //     .1
-        //     .last()
-        //     .ok_or("return statement required")?;
-        // match last {
-        //     Statement::ReturnStatement(_) => {}
-        //     _ => Err("return statement expected at the end")?,
-        // }
         Ok(subroutine_body.1)
     }
 

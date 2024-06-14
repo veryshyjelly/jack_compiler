@@ -30,7 +30,7 @@ impl<'a> Parser<'a> {
         self.consume(Terminal::Keyword(Keyword::Class))?;
         let class_name = self
             .next_element()
-            .ok_or("expected class name")?
+            .ok_or("expected class name found eof")?
             .identifier()?;
 
         let mut res = Class(class_name, vec![], vec![]);
@@ -44,7 +44,7 @@ impl<'a> Parser<'a> {
             if let Ok(subroutine_type) = SubroutineType::from_keyword(&keyword) {
                 res.2.push(self.next_subroutine_dec(subroutine_type)?);
             }
-            let closing_bracket = self.next_element().ok_or("} expected")?;
+            let closing_bracket = self.next_element().ok_or("} expected found eof")?;
             self.pending_elements.push(closing_bracket.clone());
             if closing_bracket == Symbol('}') {
                 break;
@@ -57,7 +57,7 @@ impl<'a> Parser<'a> {
 
     /** ('static'|'field') type varName (',' varName)* ';' */
     fn next_class_var_dec(&mut self, class_var_type: ClassVarType) -> Result<ClassVarDec, String> {
-        let var_type = Type::from_terminal(self.next_element().ok_or("variable type expected")?)?;
+        let var_type = Type::from_terminal(self.next_element().ok_or("variable type expected found eof")?)?;
         let mut res = ClassVarDec(class_var_type, var_type, vec![]);
         loop {
             let var_name = self
@@ -65,7 +65,7 @@ impl<'a> Parser<'a> {
                 .ok_or("variable identifier expected")?
                 .identifier()?;
             res.2.push(var_name);
-            let comma = self.next_element().ok_or(", or ; expected")?;
+            let comma = self.next_element().ok_or(", or ; expected found eof")?;
             if comma != Symbol(',') {
                 self.pending_elements.push(comma);
                 break;
@@ -81,7 +81,7 @@ impl<'a> Parser<'a> {
         subroutine_type: SubroutineType,
     ) -> Result<SubroutineDec, String> {
         let return_type =
-            ReturnType::from_terminal(self.next_element().ok_or("return type expected")?)?;
+            ReturnType::from_terminal(self.next_element().ok_or("return type expected found eof")?)?;
         let subroutine_name = self
             .next_element()
             .ok_or("subroutine name expected")?
@@ -115,11 +115,11 @@ impl<'a> Parser<'a> {
             let var_type = Type::from_terminal(next_element)?;
             let var_name = self
                 .next_element()
-                .ok_or("variable name expected")?
+                .ok_or("variable name expected found eof")?
                 .identifier()?;
             res.push(Parameter(var_type, var_name));
 
-            let comma = self.next_element().ok_or(", or ) expected")?;
+            let comma = self.next_element().ok_or(", or ) expected found eof")?;
             if comma != Symbol(',') {
                 self.pending_elements.push(comma);
                 break;
@@ -202,7 +202,7 @@ impl<'a> Parser<'a> {
             Keyword::Return => ReturnStatement(self.next_return_statement()?),
             e => {
                 self.pending_elements.push(Terminal::Keyword(kind));
-                Err(format!("statement expected found: {e:?}"))?
+                Err(format!("statement expected found: {e}"))?
             }
         };
         Ok(res)
@@ -212,11 +212,11 @@ impl<'a> Parser<'a> {
     fn next_let_statement(&mut self) -> Result<LetStatement, String> {
         let var_name = self
             .next_element()
-            .ok_or("variable name expected")?
+            .ok_or("variable name expected found eof")?
             .identifier()?;
         let mut index: Option<Expression> = None;
 
-        let opening_bracket = self.next_element().ok_or("[ or = expected")?;
+        let opening_bracket = self.next_element().ok_or("[ or = expected found eof")?;
         if opening_bracket == Symbol('[') {
             let _ = index.insert(self.next_expression()?);
             self.consume(Symbol(']'))?;
@@ -264,7 +264,7 @@ impl<'a> Parser<'a> {
     fn next_do_statement(&mut self) -> Result<DoStatement, String> {
         let caller_name = self
             .next_element()
-            .ok_or("class or var or function name expected")?
+            .ok_or("class or var or function name expected found eof")?
             .identifier()?;
         let subroutine_call = self.next_subroutine_call(caller_name)?;
         self.consume(Symbol(';'))?;
@@ -272,7 +272,7 @@ impl<'a> Parser<'a> {
     }
 
     fn next_return_statement(&mut self) -> Result<ReturnStatement, String> {
-        let next_element = self.next_element().ok_or("; expected")?;
+        let next_element = self.next_element().ok_or("; expected found eof")?;
         if next_element == Symbol(';') {
             Ok(ReturnStatement(None))
         } else {
@@ -287,7 +287,7 @@ impl<'a> Parser<'a> {
         let mut res = vec![];
         while let Ok(expression) = self.next_expression() {
             res.push(expression);
-            let comma = self.next_element().ok_or(", or ) expected")?;
+            let comma = self.next_element().ok_or(", or ) expected found eof")?;
             if comma != Symbol(',') {
                 self.pending_elements.push(comma);
                 break;
@@ -301,7 +301,7 @@ impl<'a> Parser<'a> {
         let mut res = Expression(term, vec![]);
 
         loop {
-            let next_term = self.next_element().ok_or("end of expression expected")?;
+            let next_term = self.next_element().ok_or("end of expression expected eof")?;
             if let Err(e) = next_term.clone().symbol() {
                 self.pending_elements.push(next_term);
                 return Err(e);
@@ -320,7 +320,7 @@ impl<'a> Parser<'a> {
     }
 
     fn next_term(&mut self) -> Result<Term, String> {
-        let element = self.next_element().ok_or("term expected")?;
+        let element = self.next_element().ok_or("term expected found eof")?;
 
         let res = match element {
             Symbol(c) => {
@@ -340,7 +340,7 @@ impl<'a> Parser<'a> {
             StringConstant(val) => Term::StringConstant(val),
             Terminal::Keyword(val) => Term::KeywordConstant(KeywordConstant::from_keyword(val)?),
             Terminal::Identifier(val) => {
-                let square_bracket = self.next_element().ok_or("end of expression expected")?;
+                let square_bracket = self.next_element().ok_or("end of expression expected found eof")?;
                 if square_bracket == Symbol('[') {
                     let index = self.next_expression()?;
                     self.consume(Symbol(']'))?;
@@ -359,7 +359,7 @@ impl<'a> Parser<'a> {
     }
 
     fn next_subroutine_call(&mut self, val: Identifier) -> Result<SubroutineCall, String> {
-        let dot_or_bracket = self.next_element().ok_or("end of expression expected")?;
+        let dot_or_bracket = self.next_element().ok_or("end of expression expected found eof")?;
         let res = if dot_or_bracket == Symbol('(') {
             let expression_list = self.next_expression_list()?;
             self.consume(Symbol(')'))?;
@@ -367,7 +367,7 @@ impl<'a> Parser<'a> {
         } else if dot_or_bracket == Symbol('.') {
             let subroutine_name = self
                 .next_element()
-                .ok_or("subroutine name expected")?
+                .ok_or("subroutine name expected found eof")?
                 .identifier()?;
             self.consume(Symbol('('))?;
             let expression_list = self.next_expression_list()?;
@@ -383,10 +383,10 @@ impl<'a> Parser<'a> {
     fn consume(&mut self, term: Terminal) -> Result<(), String> {
         let next_term = self
             .next_element()
-            .ok_or(format!("expected {:?} found EOF", term))?;
+            .ok_or(format!("expected {term} found EOF"))?;
         if next_term != term {
             self.pending_elements.push(next_term.clone());
-            Err(format!("expected {:?} found {:?}", term, next_term))?
+            Err(format!("expected {term} found {next_term}"))?
         }
         Ok(())
     }

@@ -1,3 +1,5 @@
+use std::fmt::{Display, Formatter};
+
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum Terminal {
     Keyword(Keyword),
@@ -7,35 +9,47 @@ pub enum Terminal {
     Identifier(Identifier),
 }
 
+impl Display for Terminal {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Terminal::Keyword(val) => write!(f, "{val}"),
+            Terminal::Symbol(val) => write!(f, "{val}"),
+            Terminal::IntegerConstant(val) => write!(f, "{val}"),
+            Terminal::StringConstant(val) => write!(f, "{val}"),
+            Terminal::Identifier(val) => write!(f, "{val}"),
+        }
+    }
+}
+
 impl Terminal {
     pub fn keyword(self) -> Result<Keyword, String> {
         match self {
             Terminal::Keyword(val) => Ok(val),
-            e => Err(format!("keyword expected found: {e:?}")),
+            e => Err(format!("keyword expected found: {e}")),
         }
     }
     pub fn symbol(self) -> Result<char, String> {
         match self {
             Terminal::Symbol(val) => Ok(val),
-            e => Err(format!("symbol expected found: {e:?}")),
+            e => Err(format!("symbol expected found: {e}")),
         }
     }
-    pub fn integer(self) -> Result<u16, String> {
-        match self {
-            Terminal::IntegerConstant(val) => Ok(val),
-            e => Err(format!("integer expected found: {e:?}")),
-        }
-    }
-    pub fn string(self) -> Result<String, String> {
-        match self {
-            Terminal::StringConstant(val) => Ok(val),
-            e => Err(format!("string constant expected found: {e:?}")),
-        }
-    }
+    // pub fn integer(self) -> Result<u16, String> {
+    //     match self {
+    //         Terminal::IntegerConstant(val) => Ok(val),
+    //         e => Err(format!("integer expected found: {e}")),
+    //     }
+    // }
+    // pub fn string(self) -> Result<String, String> {
+    //     match self {
+    //         Terminal::StringConstant(val) => Ok(val),
+    //         e => Err(format!("string constant expected found: {e}")),
+    //     }
+    // }
     pub fn identifier(self) -> Result<Identifier, String> {
         match self {
             Terminal::Identifier(val) => Ok(val),
-            e => Err(format!("identifier expected found: {e:?}")),
+            e => Err(format!("identifier expected found: {e}")),
         }
     }
 }
@@ -63,6 +77,12 @@ pub enum Keyword {
     Else,
     While,
     Return,
+}
+
+impl Display for Keyword {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", format!("{self:?}").to_lowercase())
+    }
 }
 
 impl Keyword {
@@ -98,3 +118,9 @@ impl Keyword {
 
 #[derive(Debug, Hash, Eq, PartialEq, Clone)]
 pub struct Identifier(pub String);
+
+impl Display for Identifier {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Identifier({})", self.0)
+    }
+}
